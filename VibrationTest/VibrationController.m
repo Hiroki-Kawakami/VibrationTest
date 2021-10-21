@@ -10,24 +10,21 @@
 
 @implementation VibrationController
 
+void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 static NSMutableSet<NSTimer*> *timers;
 
 +(void)startVibrationWithDuration:(double)duration {
     [self stopVibration];
     
-    void (*vibrate)(int, void *, id);
-    vibrate = dlsym(RTLD_SELF, @"AudioServicesPlaySystemSoundWithVibration".UTF8String);
+    int64_t vibrationLength = duration*1000;
+    NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
+
+    NSMutableDictionary* dict = @{
+        @"VibePattern": pattern,
+        @"Intensity": @1,
+    }.mutableCopy;
     
-    NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-    NSMutableArray* arr = [NSMutableArray array];
-    
-    [arr addObject:[NSNumber numberWithBool:YES]];
-    [arr addObject:[NSNumber numberWithInt:duration*1000]];
-    
-    [dict setObject:arr forKey:@"VibePattern"];
-    [dict setObject:[NSNumber numberWithInt:1] forKey:@"Intensity"];
-    
-    vibrate(4095,nil,dict);
+    AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate,nil,dict);
 }
 
 +(void)startVibrationWithDurations:(NSArray<NSNumber *> *)durations {

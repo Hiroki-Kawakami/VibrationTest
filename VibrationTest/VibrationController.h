@@ -7,7 +7,7 @@
 //
 
 #import <AudioToolbox/AudioToolbox.h>
-#include <dlfcn.h>
+#import <AudioToolbox/AudioServices.h>
 
 @interface VibrationController : NSObject
 
